@@ -49,12 +49,12 @@ class TimerServicePlugin: FlutterPlugin, MethodCallHandler {
           val title = arg.getString("title")
           val callback = arg.getLong("callback")
           val info = arg.getString("info")
-          val id = arg.getString("id")
+          val userdata = arg.getString("data")
           val serviceIntent = Intent(context, TimerService::class.java)
           serviceIntent.action = "START"
           serviceIntent.putExtra("title", title)
           serviceIntent.putExtra("info", info)
-          serviceIntent.putExtra("id", id)
+          serviceIntent.putExtra("userdata", userdata)
           Holder.callback = callback
           context.startService(serviceIntent)
           result.success(null)

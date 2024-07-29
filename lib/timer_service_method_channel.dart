@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:timer_service/supporter.dart';
 
 import 'timer_service_platform_interface.dart';
 
@@ -42,16 +44,14 @@ class MethodChannelTimerService extends TimerServicePlatform {
   }
 
   @override
-  Future<Map<String, dynamic>> getFinalTimerData() async {
-    final completer = Completer<Map<String, dynamic>>();
+  Future<RunningData> getFinalTimerData() async {
+    final completer = Completer<RunningData>();
     methodChannel.invokeMethod('final_data', {}).then((value) {
-      completer.complete(
-        {
-          'id': value["id"],
-          "time": value["time"],
-          "status": "ENDED",
-        },
-      );
+      completer.complete(RunningData(
+        data: value["data"] == "null" ? null : json.decode(value["data"] ?? ""),
+        seconds: value["time"] as int,
+        status: "ENDED",
+      ));
     });
     return completer.future;
   }

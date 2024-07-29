@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timer_service/supporter.dart';
 import 'package:timer_service/timer_service.dart';
 
 void main() {
@@ -45,15 +46,18 @@ class _TaskTimerExampleState extends State<TaskTimerExample> {
     final ins = await SharedPreferences.getInstance();
     ins.setString("Test", "Hello World");
     _taskTimer.startTimer(
-      title: 'Hello world',
-      id: 'sjhmashghjgsaghjdsajhg',
-      body: '',
-      function: callback,
+      callbackFunction: callback,
       streaam: (event) {
         setState(() {
           text = event.toString();
         });
       },
+      data: const TimerData(
+        notificationTitle: 'Hello world',
+        data: {
+          "id": 'sjhmashghjgsaghjdsajhg',
+        },
+      ),
     );
   }
 

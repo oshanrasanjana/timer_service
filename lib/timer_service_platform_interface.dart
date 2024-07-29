@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:timer_service/supporter.dart';
 
 import 'timer_service_method_channel.dart';
 
@@ -24,5 +25,5 @@ abstract class TimerServicePlatform extends PlatformInterface {
   Future<void> pauseTimer();
   Future<void> resumeTimer();
   Future<void>endBackgroundOperation();
-  Future<Map<String,dynamic>> getFinalTimerData();
+  Future<RunningData> getFinalTimerData();
 }

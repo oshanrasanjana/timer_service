@@ -20,7 +20,7 @@ class TimerService : Service() {
     private var isPaused: Boolean = false
     private var title: String = "Task Started"
     private var info: String = ""
-    private var id: String = ""
+    private var userdata: String = ""
     private val mainHandler = Handler(Looper.getMainLooper())
 
     override fun onCreate() {
@@ -33,7 +33,7 @@ class TimerService : Service() {
             "START"-> {
             title = if( intent.getStringExtra("title")?:"null" == "null") "Task Started" else intent.getStringExtra("title")?:"Task Started"
             info = if( intent.getStringExtra("info")?:"null" == "null") "" else intent.getStringExtra("info")?:""
-            id = if( intent.getStringExtra("id")?:"null" == "null") "" else intent.getStringExtra("id")?:""
+            userdata = if( intent.getStringExtra("userdata")?:"null" == "null") "" else intent.getStringExtra("userdata")?:""
             startService() 
             } 
             "PAUSE" -> pauseService()
@@ -99,7 +99,7 @@ class TimerService : Service() {
     private fun sendUpdateToFlutter(status:String) {
       mainHandler.post {
           val data = mapOf(
-                "id" to id,
+                "data" to userdata,
                 "time" to secondGlob,
                 "status" to status
             )

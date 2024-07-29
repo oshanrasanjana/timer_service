@@ -1,36 +1,79 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:timer_service/supporter.dart';
 
 import 'timer_service_platform_interface.dart';
 
 class TimerService {
   StreamSubscription<dynamic>? _subscription;
   void startTimer({
-    required String title,
-    required String id,
-    required String body,
-    required Function function,
-    required void Function(dynamic)? streaam,
+    required TimerData data,
+    required void Function() callbackFunction,
+    required void Function(RunningData)? streaam,
   }) async {
-    final raw = PluginUtilities.getCallbackHandle(function)?.toRawHandle();
+    final raw =
+        PluginUtilities.getCallbackHandle(callbackFunction)?.toRawHandle();
     Map<String, dynamic> map = {
-      'title': title,
-      'id': id,
+      'title': data.notificationTitle,
+      'data': json.encode(data.data ?? {}),
       'callback': raw!,
-      "info": body,
+      "info": data.notificationBody,
     };
 
     final s = await TimerServicePlatform.instance.startTimer(map);
-    _subscription = s?.listen(streaam);
+    _subscription = s
+        ?.transform<RunningData>(
+          StreamTransformer.fromHandlers(
+            handleData: (value, sink) {
+              sink.add(
+                RunningData(
+                  data: value["data"] == "null"
+                      ? null
+                      : json.decode(
+                          value["data"] ?? "",
+                        ),
+                  seconds: value["time"],
+                  status: value["status"],
+                ),
+              );
+            },
+            handleDone: (sink) {
+              sink.close();
+            },
+          ),
+        )
+        .listen(streaam);
   }
 
   void stream({
-    required void Function(dynamic)? streaam,
+    required void Function(RunningData)? streaam,
   }) async {
     final s = await TimerServicePlatform.instance.getStreamer();
-    s?.listen(streaam);
+    s
+        ?.transform<RunningData>(
+          StreamTransformer.fromHandlers(
+            handleData: (value, sink) {
+              sink.add(
+                RunningData(
+                  data: value["data"] == "null"
+                      ? null
+                      : json.decode(
+                          value["data"] ?? "",
+                        ),
+                  seconds: value["time"],
+                  status: value["status"],
+                ),
+              );
+            },
+            handleDone: (sink) {
+              sink.close();
+            },
+          ),
+        )
+        .listen(streaam);
   }
 
   void stopTimer() async {
@@ -41,11 +84,11 @@ class TimerService {
 
   void resumeTimer() => TimerServicePlatform.instance.resumeTimer();
   void excecuteBackground(
-    Future<bool> Function(String id, int seconds) excecutor,
+    Future<bool> Function(RunningData data) excecutor,
   ) async {
     WidgetsFlutterBinding.ensureInitialized();
     final data = await TimerServicePlatform.instance.getFinalTimerData();
-    await excecutor(data["id"], data["time"]);
+    await excecutor(data);
     _subscription?.cancel();
     TimerServicePlatform.instance.endBackgroundOperation();
   }
