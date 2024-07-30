@@ -11,10 +11,21 @@ import android.os.Build
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import android.graphics.BitmapFactory
+import android.app.NotificationChannel
 
 class NotificationService(private val context: Context) {
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    
+    fun createNotificationChannel() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                NotificationService.COUNTER_CHANNEL_ID,
+                "Timer",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            channel.description = "Used for task timer foreground Updates"
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
     //TODO:change.setSmallIcon(R.drawable.)
 
     fun getTimerNotification(title: String,info:String,isPaused:Boolean=false): Notification {

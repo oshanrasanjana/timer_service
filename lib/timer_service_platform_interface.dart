@@ -24,6 +24,8 @@ abstract class TimerServicePlatform extends PlatformInterface {
   Future<void> stopTimer();
   Future<void> pauseTimer();
   Future<void> resumeTimer();
-  Future<void>endBackgroundOperation();
+  Future<void> endBackgroundOperation();
   Future<RunningData> getFinalTimerData();
+  Future<void> updateUserData(Map<String, dynamic> data);
+  Future<void> initialize();
 }

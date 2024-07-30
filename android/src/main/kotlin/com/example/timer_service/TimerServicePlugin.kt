@@ -47,7 +47,7 @@ class TimerServicePlugin: FlutterPlugin, MethodCallHandler {
         try {
           val arg = JSONObject(call.arguments as Map<String, String>)
           val title = arg.getString("title")
-          val callback = arg.getLong("callback")
+          val callback = arg.getLong("callback")?:null
           val info = arg.getString("info")
           val userdata = arg.getString("data")
           val serviceIntent = Intent(context, TimerService::class.java)
@@ -62,6 +62,15 @@ class TimerServicePlugin: FlutterPlugin, MethodCallHandler {
           val error = e.toString()
           result.success("Something went wrong: $error")
         }
+      }
+      "updateData" -> {
+        val arg = JSONObject(call.arguments as Map<String, String>)
+        val userdata = arg.getString("data")
+        val serviceIntent = Intent(context, TimerService::class.java)
+        serviceIntent.action = "UPDATE"
+        serviceIntent.putExtra("userdata", userdata)
+        context.startService(serviceIntent)
+        result.success(null)
       }
       "stopTimer" -> {
         context.stopService(Intent(context, TimerService::class.java))
@@ -87,6 +96,10 @@ class TimerServicePlugin: FlutterPlugin, MethodCallHandler {
         context.stopService(Intent(context, TimerService::class.java))
         Holder.engine?.destroy()
         Holder.engine = null
+        result.success(null)
+      }
+      "initialize" -> {
+        NotificationService(context).createNotificationChannel()
         result.success(null)
       }
       else -> result.notImplemented()

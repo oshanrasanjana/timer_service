@@ -38,7 +38,9 @@ class TimerService : Service() {
             } 
             "PAUSE" -> pauseService()
             "RESUME" -> resumeService()
-          
+            "UPDATE" -> {
+            userdata = if( intent.getStringExtra("userdata")?:"null" == "null") "" else intent.getStringExtra("userdata")?:""
+            }
         }
         return START_STICKY
     }

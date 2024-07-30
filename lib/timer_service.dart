@@ -4,24 +4,31 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:timer_service/supporter.dart';
-
 import 'timer_service_platform_interface.dart';
+export 'package:timer_service/supporter.dart';
 
 class TimerService {
   StreamSubscription<dynamic>? _subscription;
+  void initialize()=> TimerServicePlatform.instance.initialize();
   void startTimer({
     required TimerData data,
     required void Function() callbackFunction,
-    required void Function(RunningData)? streaam,
+    void Function(RunningData)? streaam,
   }) async {
     final raw =
         PluginUtilities.getCallbackHandle(callbackFunction)?.toRawHandle();
     Map<String, dynamic> map = {
       'title': data.notificationTitle,
       'data': json.encode(data.data ?? {}),
-      'callback': raw!,
       "info": data.notificationBody,
     };
+    if (raw != null) {
+      map.update(
+        'callback',
+        (value) => raw,
+        ifAbsent: () => raw,
+      );
+    }
 
     final s = await TimerServicePlatform.instance.startTimer(map);
     _subscription = s
@@ -81,7 +88,8 @@ class TimerService {
   }
 
   void pauseTimer() => TimerServicePlatform.instance.pauseTimer();
-
+  void updateUserData(Map<String, dynamic> data) =>
+      TimerServicePlatform.instance.updateUserData(data);
   void resumeTimer() => TimerServicePlatform.instance.resumeTimer();
   void excecuteBackground(
     Future<bool> Function(RunningData data) excecutor,

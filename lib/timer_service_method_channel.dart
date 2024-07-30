@@ -55,4 +55,14 @@ class MethodChannelTimerService extends TimerServicePlatform {
     });
     return completer.future;
   }
+  
+  @override
+  Future<void> updateUserData(Map<String, dynamic> data) async{
+    await methodChannel.invokeMethod('updateData',{"data":json.encode(data)});
+  }
+  
+  @override
+  Future<void> initialize() async{
+    await methodChannel.invokeMethod('initialize');
+  }
 }
