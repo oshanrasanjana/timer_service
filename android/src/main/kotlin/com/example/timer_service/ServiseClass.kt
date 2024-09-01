@@ -32,9 +32,9 @@ class TimerService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             "START"-> {
-            title = intent.getStringExtra("title","Task Started")
-            info = intent.getStringExtra("info","")
-            userdata = ntent.getStringExtra("userdata","")
+            title = if( intent.getStringExtra("title")?:"null" == "null") "Task Started" else intent.getStringExtra("title")?:"Task Started"
+            info = if( intent.getStringExtra("info")?:"null" == "null") "" else intent.getStringExtra("info")?:""
+            userdata = if( intent.getStringExtra("userdata")?:"null" == "null") "" else intent.getStringExtra("userdata")?:""
             stopSeconds = intent.getIntExtra("stopseconds", 0)
             startService() 
             } 
