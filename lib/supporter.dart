@@ -2,10 +2,12 @@ class TimerData {
   final String notificationTitle;
   final String? notificationBody;
   final Map<String, dynamic>? data;
+  final int stopTime;
   const TimerData({
     required this.notificationTitle,
     this.notificationBody,
     this.data,
+    required this.stopTime,
   });
 }
 

@@ -21,6 +21,7 @@ class TimerService {
       'title': data.notificationTitle,
       'data': json.encode(data.data ?? {}),
       "info": data.notificationBody,
+      "stopseconds":data.stopTime,
     };
     if (raw != null) {
       map.update(
