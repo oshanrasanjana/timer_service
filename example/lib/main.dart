@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:timer_service/supporter.dart';
 import 'package:timer_service/timer_service.dart';
 
 void main() {
@@ -57,6 +56,7 @@ class _TaskTimerExampleState extends State<TaskTimerExample> {
         data: {
           "id": 'sjhmashghjgsaghjdsajhg',
         },
+        stopTime: 1000,
       ),
     );
   }
